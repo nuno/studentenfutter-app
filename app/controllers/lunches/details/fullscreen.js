@@ -1,14 +1,21 @@
-var nav;
+var nav,
+	image;
 
 /**
  *  Constructor
  */
 (function constructor(args) {
-	$.image.setImage(args.image);
-//	$.window.setTitle(args.title);
+	image = args.image;
+	$.image.setImage(image);
+	
+	if (OS_ANDROID) {
+   		Alloy.Globals.setAndroidBackButton($.window);
+   	}
 })(arguments[0] || {});
 
 function close() {
+	image = null;
+
 	if (OS_IOS) {
 		nav.close();
 	} else {

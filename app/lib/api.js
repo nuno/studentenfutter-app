@@ -41,8 +41,8 @@ exports.postProductImage = function(params, cb, onProcess) {
 		var RequestInstance = require('/request');
 				
 		var request = new RequestInstance({
-			url : "/images/new",
-			type : "POST",
+			url : '/images/new',
+			type : 'POST',
 			data: params,
 			isFileUpload: true,
 			process: function(e) {
@@ -68,24 +68,28 @@ exports.postProductImage = function(params, cb, onProcess) {
  *	@return void
  */
 exports.postRating = function(params, cb) {
+	var productIdentifier = 'rating-' + params.productId + '-' + Ti.Platform.id;
+	
+	if (Ti.App.Properties.getBool(productIdentifier, false)) {
+		cb({success: false});
+		return;
+	}
+	
 	try {
 		var auth = require('/auth');
 		var RequestInstance = require('/request');
 				
 		var request = new RequestInstance({
-			url : "/ratings/new",
-			type : "POST",
+			url : '/ratings/new',
+			type : 'POST',
 			data: {
 				productId: params.productId,
 				userId: Ti.Platform.id,
 				value: params.rating
 			},
 			success: function(json) {
-				if (e.success) {
-					cb(_.extend(json, {success: true}));
-				} else {
-					cb(_.extend(json, {success: false}));
-				}
+				Ti.App.Properties.setBool(productIdentifier, true);
+				cb(json);
 			},
 			error: function() {
 				cb({success: false});
@@ -109,8 +113,8 @@ exports.getLunches = function(params, cb) {
 		var RequestInstance = require('/request');
 		
 		var request = new RequestInstance({
-			url : "/lunches/list/" + params.date + "/" + params.location,
-			type : "GET",
+			url : '/lunches/list/' + params.date + '/' + params.location,
+			type : 'GET',
 			success : function(json) {
 				cb(_.extend(json, {success: true}));
 			},
@@ -136,7 +140,7 @@ exports.getContrib = function(cb) {
 		var request = new RequestInstance({
 			url : 'https://api.github.com/repos/hansemannn/studentenfutter-app/contributors',
 			external: true,
-			type : "GET",
+			type : 'GET',
 			success : function(json) {
 				cb(_.extend(json, {success: true}));
 			},

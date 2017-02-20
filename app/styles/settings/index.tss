@@ -39,8 +39,12 @@
 	right: 15
 }
 
-".notSelectable[platform=ios]": {
+".detailNoSelectable[platform=ios]": {
 	selectionStyle: Ti.UI.iOS.ListViewCellSelectionStyle.NONE
+}
+
+".detailNoSelectable[platform=android]": {
+	accessoryType: Ti.UI.LIST_ACCESSORY_TYPE_DETAIL
 }
 
 ".tabbedBar[platform=ios]": {	
@@ -49,12 +53,12 @@
 }
 
 ".selectedCategory[platform=android]": {	
-    right: 25,
+    right: 30,
 	color: Alloy.CFG.styles.tintColor
 }
 
 ".contactSection[platform=ios]": {
-	footerTitle: "Made with ⚒ in Osnabrooklyn" // TODO: Localize properly
+	footerTitle: "Made with ⚒ in Osnabrück, 🇩🇪" // TODO: Localize properly
 }
 
 "#picker": {

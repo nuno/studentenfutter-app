@@ -13,6 +13,8 @@ var nav,
         nav = Ti.UI.iOS.createNavigationWindow({
             window: $.window
         });
+    } else if (OS_ANDROID) {
+        Alloy.Globals.setAndroidBackButton($.window);
     }
 })(arguments[0] || {});
 
@@ -32,10 +34,15 @@ function populateLocations() {
         var attrs = {
 			properties: {
                 itemId: locations[i].id,
-				title: locations[i].title,
-                accessoryType: Ti.UI[((currentCanteenName == locations[i].title) ? "LIST_ACCESSORY_TYPE_CHECKMARK" : "LIST_ACCESSORY_TYPE_DISCLOSURE")]
+				title: locations[i].title
 			}
 		};
+        
+        if (currentCanteenName == locations[i].title) {
+            attrs.properties.accessoryType = Ti.UI.LIST_ACCESSORY_TYPE_CHECKMARK;
+        } else if (OS_IOS) {
+            attrs.properties.accessoryType = Ti.UI.LIST_ACCESSORY_TYPE_DISCLOSURE; // No custom disclosure on Android
+        }
         
         if (OS_ANDROID) {
             attrs = {

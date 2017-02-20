@@ -1,5 +1,11 @@
 {
 	"global": {
+		"languages": [
+			"en",
+			"de",
+			"es",
+			"pt"			
+		],
 		"styles": {
 			"tintColor": "#51ccf3"
 		},
@@ -16,5 +22,7 @@
 	"os:ios": {},
 	"os:mobileweb": {},
 	"os:windows": {},
-	"dependencies": {}
+	"dependencies": {
+		"nl.fokkezb.pullToRefresh": "3.0.0"
+	}
 }

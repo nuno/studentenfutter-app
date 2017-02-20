@@ -2,7 +2,9 @@
 *  Constructor
 */
 (function constructor(args) {    
-
+    if (OS_ANDROID) {
+        Alloy.Globals.setAndroidBackButton($.window);
+    }
 })(arguments[0] || {});
    
 function populateContributors() {
@@ -20,7 +22,7 @@ function populateContributors() {
                 properties: {
                     itemId: contributor.id,
                     username: contributor.login,
-                    accessoryType: Ti.UI.LIST_ACCESSORY_TYPE_DISCLOSURE 
+                    accessoryType: OS_IOS ? Ti.UI.LIST_ACCESSORY_TYPE_DISCLOSURE : null
                 },
                 avatar: {
                     image: contributor.avatar_url
@@ -36,7 +38,7 @@ function populateContributors() {
         
         $.section.setItems(items);
         loader.hide();
-    });
+    });    
 }
 
 function showContributorPage(e) {

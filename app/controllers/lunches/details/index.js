@@ -1,20 +1,24 @@
 var nav,
 	product,
 	utils,
+	onRatingUpdated,
 	ListAction;
 
 /**
  *  Constructor
  */
-(function constructor(_product) {
-	product = _product;
+(function constructor(args) {
+	product = args.product;
+	onRatingUpdated = args.onRatingUpdated;
 	utils = require("/utils");
 	
 	if (OS_IOS) {
 		nav = Ti.UI.iOS.createNavigationWindow({
 			window: $.details
 		});
-	}
+	} else if (OS_ANDROID) {
+        Alloy.Globals.setAndroidBackButton($.details);
+    }
 	
 	// Mapped to the itemId's of the items
 	ListAction = {
@@ -29,7 +33,8 @@ function setUI() {
 	$.title.setText(product.name);
 	
 	setImages();
-	setRating();
+	setRating(product.rating);
+	setAdditives();
 }
 
 function setImages() {
@@ -62,7 +67,8 @@ function setImages() {
 			image: image,
 		});
 		
-		productImage.addEventListener('click', function(e) {
+		// Android currently doesn't support this due to TIMOB-24379
+		OS_IOS && productImage.addEventListener('click', function(e) {
 			openFullscreenImage(image);
 		});
 		
@@ -95,22 +101,26 @@ function openFullscreenImage(image) {
 	}).show();
 }
 
-function setRating() {
+function setRating(rating) {
 	var section = $.list.sections[0];
 	var ratingCell = section.items[0];
+
+	ratingCell.rating.image = utils.formattedStars(rating);
+	section.updateItemAt(0, ratingCell);
+}
+
+function setAdditives() {
+	var section = $.list.sections[0];
 	var additivesCell = section.items[1];
 	var hasAdditives = product.additives && product.additives.length;
-
-	ratingCell.rating.image = utils.formattedStars(product.rating);
-	additivesCell.additives.text = hasAdditives ? product.additives.length : "0";
 	
 	if (!hasAdditives) {
-		additivesCell.properties.accessoryType = Ti.UI.LIST_ACCESSORY_TYPE_NONE;
-		additivesCell.additivesBackground.right = OS_IOS ? 15 : 30;
-		additivesCell.properties.selectionStyle = (OS_IOS) ? Ti.UI.iOS.ListViewCellSelectionStyle.NONE : null;
+		section.deleteItemsAt(1, 1);
+		return;
 	}
 	
-	section.updateItemAt(0, ratingCell);
+	additivesCell.additives.text = hasAdditives ? product.additives.length : "0";
+	
 	section.updateItemAt(1, additivesCell);
 }
 
@@ -275,7 +285,11 @@ function handleAction(e) {
 function performRating() {
 	Alloy.createController('/lunches/details/ratingView', {
 		parent: $.details,
-		productId: product.id
+		productId: product.id,
+		onRatingUpdated: function(newRating) {
+			setRating({value: newRating});
+			onRatingUpdated();
+		}
 	}).show();
 }
 

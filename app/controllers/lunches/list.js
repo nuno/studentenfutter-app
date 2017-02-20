@@ -172,11 +172,24 @@ function openDetails(itemId, animated) {
         return;
     }
     
-    Alloy.createController("/lunches/details/index", product).open(animated);
+    Alloy.createController("/lunches/details/index", {
+        product: product,
+        onRatingUpdated: onRatingUpdated
+    }).open(animated);
+}
+
+function onRatingUpdated(e) {
+    fetchData({
+        force: true
+    });
 }
 
 function fetchData(args) {
-    !args.force && loader.show();
+    if (!args.force) {
+        $.placeholder.hide();
+        loader.show();
+    }
+    
     $.window.setTitle(L("loading"));
     
     var api = require("/api");
@@ -191,9 +204,7 @@ function fetchData(args) {
 }
 
 function setUI() {
-    if (OS_IOS) {
-        $.refresh.endRefreshing();
-    }
+    $.refresh.hide();
     
     var showAdditives = Ti.App.Properties.getBool("showAdditives", true);
     var showRatings = Ti.App.Properties.getBool("showRatings", true);
